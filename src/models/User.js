@@ -21,7 +21,11 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Password is required'],
         minLength: [4, 'Password should be at least 4 characters long']
-    }
+    },
+    createdAnimals: [{
+        type: mongoose.Types.ObjectId,
+        ref: 'Animal'
+    }],
 });
 
 userSchema.pre('save', async function (next) {
@@ -39,7 +43,7 @@ userSchema.virtual('rePassword')
         this._rePassword = value
     });
 // 
-userSchema.path('password').validate(function() {
+userSchema.path('password').validate(function () {
     if (this.password && this._rePassword) {
         if (this.password !== this._rePassword) {
             this.invalidate('rePassword', 'Passwords missmatch!');
