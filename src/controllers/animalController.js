@@ -3,10 +3,14 @@ const { errorMessenger } = require('../utils/errorMessageUtil');
 const router = require('express').Router();
 const animalService = require('../services/animalService');
 
-router.get('/', (req, res) => {
-
-
-    res.render('animals/all-posts');
+router.get('/', async (req, res) => {
+    try {
+        const animals = await animalService.getAll().lean();
+        
+        res.render('animals/all-posts', { animals });
+    } catch (error) {
+        res.render('animals/all-posts', { error: errorMessenger(error) });
+    }
 })
 
 router.get('/create', isAuth, (req, res) => {
