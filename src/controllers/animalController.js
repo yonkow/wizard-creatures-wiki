@@ -31,4 +31,24 @@ router.post('/create', isAuth, async (req, res) => {
     };
 });
 
+router.get('/:animalId', async (req, res) => {
+    const animalId = req.params.animalId;
+
+    try {
+        const animal = await animalService.getOne(animalId);
+
+        const isOwner = animal.owner && animal.owner._id == req.user?._id;
+
+        const isVoted = animal.votes.some(user => user._id == req.user?._id);
+
+        const voteRating = animal.votes.length;
+
+        const voteEmails = animal.votes.map(user => user.email).join(', ');
+
+        res.render('animals/details', { animal, isOwner, isVoted, voteRating, voteEmails })
+    } catch (error) {
+        res.render('/', { error: errorMessenger(error) });
+    }
+});
+
 module.exports = router;
