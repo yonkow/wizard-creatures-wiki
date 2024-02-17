@@ -1,17 +1,36 @@
-<section id="registerPage">
-    <form id='registerForm' method="post">
-        <label for="email">Email:</label>
-        <input type="text" id="email" name="email" placeholder="Email" value="{{email}}">
-
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" placeholder="Enter your Username" value="{{username}}">
-
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" placeholder="Password" value="{{password}}">
-
-        <label for="rePassword">Repeat Password:</label>
-        <input type="password" id="rePassword" name="rePassword" placeholder="Repeat Password">
-
-        <input type="submit" class="register" value="Register">
-    </form>
+<section id="register-page">
+    <div class="signupSection">
+        <div class="info">
+            <h2>"I hope you're pleased with yourselves. We could all have been killed — or worse, expelled. Now if you
+                don't mind, I'm going to bed."</h2>
+        </div>
+        <form action="/auth/register" method="post" class="signupForm">
+            <h2>Sign Up</h2>
+            <ul class="noBullet">
+                <li>
+                    <label for="first-name">First Name:</label>
+                    <input type="text" class="inputFields" id="first-name" name="firstName" value="{{firstName}}" placeholder="Alex" />
+                </li>
+                <li>
+                    <label for="last-name">Last Name:</label>
+                    <input type="text" class="inputFields" id="last-name" name="lastName" value="{{lastName}}" placeholder="Petkov" />
+                </li>
+                <li>
+                    <label for="email">Email:</label>
+                    <input type="text" class="inputFields" id="email" name="email" value="{{email}}" placeholder="alex@gmail.com" />
+                </li>
+                <li>
+                    <label for="password">Password:</label>
+                    <input type="password" class="inputFields" id="password" name="password" placeholder="******" />
+                </li>
+                <li>
+                    <label for="repeat-password">Repeat-Password:</label>
+                    <input type="password" class="inputFields" id="repeat-password" name="rePassword" placeholder="******" />
+                </li>
+                <li id="center-btn">
+                    <button id="join-btn">JOIN</button>
+                </li>
+            </ul>
+        </form>
+    </div>
 </section>
