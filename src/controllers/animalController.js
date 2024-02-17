@@ -2,11 +2,12 @@ const { isAuth } = require('../middlewares/authMiddleware');
 const { errorMessenger } = require('../utils/errorMessageUtil');
 const router = require('express').Router();
 const animalService = require('../services/animalService');
+const getOneDetailedAnimalMiddleware = require('../middlewares/animalMiddleware');
 
 router.get('/', async (req, res) => {
     try {
         const animals = await animalService.getAll().lean();
-        
+
         res.render('animals/all-posts', { animals });
     } catch (error) {
         res.render('animals/all-posts', { error: errorMessenger(error) });
@@ -31,23 +32,29 @@ router.post('/create', isAuth, async (req, res) => {
     };
 });
 
-router.get('/:animalId', async (req, res) => {
+router.get('/:animalId', getOneDetailedAnimalMiddleware, async (req, res) => {
+    const animal = req.animalData;
+
+    // const isOwner = animal.owner && animal.owner._id == req.user?._id;
+
+    // const isVoted = animal.votes.some(user => user._id == req.user?._id);
+
+    // const voteRating = animal.votes.length;
+
+    // const voteEmails = animal.votes.map(user => user.email).join(', ');
+
+    res.render('animals/details', { animal })
+});
+
+router.get('/:animalId/vote', isAuth, getOneDetailedAnimalMiddleware, async (req, res) => {
     const animalId = req.params.animalId;
+    const userId = req.user._id;
 
     try {
-        const animal = await animalService.getOne(animalId);
-
-        const isOwner = animal.owner && animal.owner._id == req.user?._id;
-
-        const isVoted = animal.votes.some(user => user._id == req.user?._id);
-
-        const voteRating = animal.votes.length;
-
-        const voteEmails = animal.votes.map(user => user.email).join(', ');
-
-        res.render('animals/details', { animal, isOwner, isVoted, voteRating, voteEmails })
-    } catch (error) {
-        res.render('/', { error: errorMessenger(error) });
+        await animalService.vote(animalId, userId, req.animalData);
+        res.redirect(`/animals/${animalId}`);
+    } catch (err) {
+        res.render('animals/details', { animal: req.animalData, error: errorMessenger(err) });
     }
 });
 

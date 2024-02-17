@@ -20,3 +20,16 @@ exports.getOne = async (animalId) => {
         throw new Error('Something went wrong...');
     }
 };
+
+exports.vote = (animalId, userId, animalData) => {
+
+    if (animalData.isOwner) {
+        throw new Error('You are animal\'s owner');
+    }
+
+    if (animalData.isVoted) {
+        throw new Error('You have already voted this animal');
+    }
+
+    Animal.findByIdAndUpdate(animalId, {$push: {votes: userId}});
+};
