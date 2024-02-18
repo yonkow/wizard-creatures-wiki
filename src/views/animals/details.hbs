@@ -5,7 +5,7 @@
             <div class="card_datails">
 
                 <h1>Name: {{animal.name}}</h1>
-                <h3>Created by an author: {{animal.owner.name}}</h3>
+                <h3>Created by an author: {{animal.owner.firstName}} {{animal.owner.lastName}}</h3>
                 <div class="card_character">
                     <p class="card-species">Species: {{animal.species}}</p>
                     <p class="card-skin">Skin colour: {{animal.skin}}</p>
@@ -16,11 +16,11 @@
 
                 {{#if isAuthenticated}}
                 <div class="social-btn">
-                    {{#if animal.isOwner}}
+                    {{#if isOwner}}
                     <a href="/animals/{{animal._id}}/edit" class="edit-btn">Edit</a>
                     <a href="/animals/{{animal._id}}/delete" class="del-btn">Delete</a>
                     {{else}}
-                    {{#unless animal.isVoted}}
+                    {{#unless isVoted}}
                     <a href="/animals/{{animal._id}}/vote" class="vote-up">Vote</a>
                     {{else}}
                     <p class="thanks-for-vote">Thanks For Voting</p>
@@ -45,10 +45,10 @@
                 <h1>Votes</h1>
                 <div class="card_vote">
                     <!-- Show the rating of votes, if there are no votes yet, the number must be 0. -->
-                    <p class="PV">Total rating of votes: {{#if animal.votes}}{{animal.voteRating}}{{else}}0{{/if}}</p>
+                    <p class="PV">Total rating of votes: {{#if animal.votes}}{{voteRating}}{{else}}0{{/if}}</p>
                 </div>
                 {{#if animal.votes}}
-                <p class="disc">People who voted for the post - {{animal.voteEmails}}</p>
+                <p class="disc">People who voted for the post - {{voteEmails}}</p>
                 {{else}}
                 <p class="disc">People who voted for the post - No one has voted yet.</p>
                 {{/if}}

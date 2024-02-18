@@ -2,7 +2,7 @@ const { isAuth } = require('../middlewares/authMiddleware');
 const { errorMessenger } = require('../utils/errorMessageUtil');
 const router = require('express').Router();
 const animalService = require('../services/animalService');
-const getOneDetailedAnimalMiddleware = require('../middlewares/animalMiddleware');
+const { isAnimalOwner } = require('../middlewares/animalMiddleware');
 
 router.get('/', async (req, res) => {
     try {
@@ -32,29 +32,57 @@ router.post('/create', isAuth, async (req, res) => {
     };
 });
 
-router.get('/:animalId', getOneDetailedAnimalMiddleware, async (req, res) => {
-    const animal = req.animalData;
+router.get('/:animalId', async (req, res) => {
+    const animalId = req.params.animalId;
+    const userId = req.user?._id
+    try {
+        const { animal, isOwner, isVoted, voteRating, voteEmails } = await animalService.getOneDetailed(animalId, userId);
 
-    // const isOwner = animal.owner && animal.owner._id == req.user?._id;
-
-    // const isVoted = animal.votes.some(user => user._id == req.user?._id);
-
-    // const voteRating = animal.votes.length;
-
-    // const voteEmails = animal.votes.map(user => user.email).join(', ');
-
-    res.render('animals/details', { animal })
+        res.render('animals/details', { animal, isOwner, isVoted, voteRating, voteEmails })
+    } catch (err) {
+        res.render('404', { error: errorMessenger(err) });
+    }
 });
 
-router.get('/:animalId/vote', isAuth, getOneDetailedAnimalMiddleware, async (req, res) => {
+router.get('/:animalId/vote', isAuth, async (req, res) => {
     const animalId = req.params.animalId;
     const userId = req.user._id;
 
     try {
-        await animalService.vote(animalId, userId, req.animalData);
+        const currentAnimal = await animalService.getOneDetailed(animalId, userId);
+        await animalService.vote(animalId, userId, currentAnimal.isVoted, currentAnimal.isOwner);
         res.redirect(`/animals/${animalId}`);
     } catch (err) {
-        res.render('animals/details', { animal: req.animalData, error: errorMessenger(err) });
+        res.render('404', { error: errorMessenger(err) });
+    }
+});
+
+router.get('/:animalId/delete', isAnimalOwner, async (req, res) => {
+    try {
+        await animalService.delete(req.params.animalId);
+        res.redirect('/animals');
+    } catch (err) {
+        res.render('404', { error: errorMessenger(err) });
+    }
+});
+
+router.get('/:animalId/edit', isAnimalOwner, async (req, res) => {
+    const courseId = req.params.animalId;
+
+    const course = await animalService.getOne(courseId);
+
+    res.render('animals/edit', { ...course })
+});
+
+router.post('/:animalId/edit', isAnimalOwner, async (req, res) => {
+    const animalId = req.params.animalId;
+    const newData = req.body;
+    try {
+        await animalService.edit(animalId, newData);
+
+        res.redirect(`/animals/${animalId}`);
+    } catch (err) {
+        res.render('animals/edit', { ...newData, error: errorMessenger(err) });
     }
 });
 
