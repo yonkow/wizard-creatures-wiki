@@ -1,4 +1,3 @@
-const getOneDetailedAnimalMiddleware = require('../middlewares/animalMiddleware');
 const Animal = require('../models/Animal')
 const User = require('../models/User');
 

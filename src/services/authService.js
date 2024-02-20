@@ -37,7 +37,6 @@ exports.login = async (logData) => {
     return token;
 };
 
-
 function generateToken(user) {
     const payload = {
         _id: user._id,
