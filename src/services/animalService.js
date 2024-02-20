@@ -17,7 +17,7 @@ exports.getOne = async (animalId) => {
         }
         return animal;
     } catch (err) {
-        throw new Error(err);
+        return err;
     }
 };
 

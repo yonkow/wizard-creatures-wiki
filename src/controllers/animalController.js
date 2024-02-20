@@ -58,8 +58,12 @@ router.get('/:animalId/vote', isAuth, async (req, res) => {
 });
 
 router.get('/:animalId/delete', isAnimalOwner, async (req, res) => {
+    const animalId = req.params.animalId;
+    
     try {
-        await animalService.delete(req.params.animalId);
+        await animalService.getOneDetailed(animalId, req.user._id);
+        
+        await animalService.delete(animalId);
         res.redirect('/animals');
     } catch (err) {
         res.render('404', { error: errorMessenger(err) });
