@@ -59,10 +59,8 @@ router.get('/:animalId/vote', isAuth, async (req, res) => {
 
 router.get('/:animalId/delete', isAnimalOwner, async (req, res) => {
     const animalId = req.params.animalId;
-    
+
     try {
-        await animalService.getOneDetailed(animalId, req.user._id);
-        
         await animalService.delete(animalId);
         res.redirect('/animals');
     } catch (err) {
@@ -72,10 +70,12 @@ router.get('/:animalId/delete', isAnimalOwner, async (req, res) => {
 
 router.get('/:animalId/edit', isAnimalOwner, async (req, res) => {
     const courseId = req.params.animalId;
-
-    const course = await animalService.getOne(courseId);
-
-    res.render('animals/edit', { ...course })
+    try {
+        const course = await animalService.getOne(courseId);
+        res.render('animals/edit', { ...course })
+    } catch (err) {
+        res.render('404', { error: errorMessenger(err) });
+    }
 });
 
 router.post('/:animalId/edit', isAnimalOwner, async (req, res) => {
